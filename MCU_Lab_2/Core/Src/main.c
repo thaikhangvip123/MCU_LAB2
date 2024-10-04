@@ -117,6 +117,43 @@ void updateClockBuffer() {
 	buffer[2] = minute / 10;
 	buffer[3] = minute % 10;
 }
+
+int TIMER_CYCLE = 10;
+
+int timer1_flag = 0;
+int timer1_counter = 0;
+void setTimer1(int duration) {
+  timer1_counter = duration / TIMER_CYCLE;
+  timer1_flag = 0;
+}
+
+int timer2_flag = 0;
+int timer2_counter = 0;
+void setTimer2(int duration) {
+  timer2_counter = duration / TIMER_CYCLE;
+  timer2_flag = 0;
+}
+
+int timer3_flag = 0;
+int timer3_counter = 0;
+void setTimer3(int duration) {
+  timer3_counter = duration / TIMER_CYCLE;
+  timer3_flag = 0;
+}
+void timer_run(){
+	if(timer1_counter > 0){
+		timer1_counter--;
+		if(timer1_counter == 0) timer1_flag = 1;
+	}
+	if(timer2_counter > 0){
+		timer2_counter--;
+		if(timer2_counter == 0) timer2_flag = 1;
+	}
+	if(timer3_counter > 0){
+		timer3_counter--;
+		if(timer3_counter == 0) timer3_flag = 1;
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -154,22 +191,31 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  setTimer1(1000);
+  setTimer2(1000);
   while (1)
   {
-	  second++;
-	  if(second >= 60) {
-		  second = 0;
-		  minute++;
+	  if(timer1_flag == 1) {
+		  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+		  HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
+		  setTimer1(1000);
 	  }
-	  if(minute >= 60) {
-		  minute = 0;
-		  hour++;
+	  if(timer2_flag == 1) {
+		  second++;
+		  if(second >= 60) {
+			  second = 0;
+			  minute++;
+		  }
+		  if(minute >= 60) {
+			  minute = 0;
+			  hour++;
+		  }
+		  if(hour >= 24) {
+			  hour = 0;
+		  }
+		  updateClockBuffer();
+		  setTimer2(1000);
 	  }
-	  if(hour >= 24) {
-		  hour = 0;
-	  }
-	  updateClockBuffer();
-	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -299,22 +345,16 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-int dot = 100;
 int led = 25;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	if(dot == 0) {
-		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-		HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
-		dot = 100;
-	}
-	if(led == 0) {
+	if(led <= 0) {
 		update7SEG(index_led);
 		index_led++;
 		if(index_led >= 4) index_led = 0;
 		led = 25;
 	}
-	dot--;
 	led--;
+	timer_run();
 }
 /* USER CODE END 4 */
 
