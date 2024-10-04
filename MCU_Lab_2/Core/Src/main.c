@@ -56,8 +56,8 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-int controllPin[2] = {EN0_Pin, EN1_Pin};
-int buffer[2] = {1, 2};
+int controllPin[4] = {EN0_Pin, EN1_Pin, EN2_Pin, EN3_Pin};
+int buffer[4] = {1, 2, 3, 0};
 int counter = 100, state = 1;
 
 void display7SEG(int num) {
@@ -252,8 +252,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 		clear();
 		enable(state);
 		display7SEG(buffer[state]);
-		if (state == 0) state = 1;
-		else state = 0;
+		state++;
+		if (state >= 4) state = 0;
 	}
 }
 /* USER CODE END 4 */
