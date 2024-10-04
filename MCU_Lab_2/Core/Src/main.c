@@ -56,8 +56,10 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+const int MAX_LED = 4;
+int index_led = 0;
 int controllPin[4] = {EN0_Pin, EN1_Pin, EN2_Pin, EN3_Pin};
-int buffer[4] = {1, 2, 3, 0};
+int buffer[4] = {1, 2, 3, 4};
 int counter = 100, state = 1;
 
 void display7SEG(int num) {
@@ -73,6 +75,37 @@ void clear() {
 }
 void enable(int pin) {
 	HAL_GPIO_WritePin(GPIOA, controllPin[pin], RESET);
+}
+void update7SEG(int index) {
+	clear();
+	HAL_GPIO_WritePin ( EN0_GPIO_Port , EN0_Pin , 1);
+	HAL_GPIO_WritePin ( EN1_GPIO_Port , EN1_Pin , 1);
+	HAL_GPIO_WritePin ( EN2_GPIO_Port , EN2_Pin , 1);
+	HAL_GPIO_WritePin ( EN3_GPIO_Port , EN3_Pin , 1);
+	switch (index) {
+		case 0: {
+			display7SEG(buffer[0]);
+			enable(0);
+			break;
+		}
+		case 1: {
+			display7SEG(buffer[1]);
+			enable(1);
+			break;
+		}
+		case 2: {
+			display7SEG(buffer[2]);
+			enable(2);
+			break;
+		}
+		case 3: {
+			display7SEG(buffer[3]);
+			enable(3);
+			break;
+		}
+		default:
+			break;
+	}
 }
 /* USER CODE END 0 */
 
@@ -248,12 +281,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 		if (counter == 0) {
 			counter = 100;
 			HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+			HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
 		}
-		clear();
-		enable(state);
-		display7SEG(buffer[state]);
-		state++;
-		if (state >= 4) state = 0;
+		update7SEG(index_led++);
+		if(index_led >= 4) index_led = 0;
 	}
 }
 /* USER CODE END 4 */
