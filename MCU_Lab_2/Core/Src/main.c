@@ -56,7 +56,24 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+int controllPin[2] = {EN0_Pin, EN1_Pin};
+int buffer[2] = {1, 2};
+int counter = 100, state = 1;
 
+void display7SEG(int num) {
+	char segNum[10] = {0xC0, 0xF9, 0xA4, 0xB0, 0x99, 0x92, 0x82, 0xF8, 0x80, 0x90};
+	for (int i = 0; i < 7; ++i) {
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0 << i, (segNum[num] >> i) & 1);
+	}
+}
+void clear() {
+	HAL_GPIO_WritePin(GPIOA, EN0_Pin | EN1_Pin, SET);
+	HAL_GPIO_WritePin(GPIOB, SEG0_Pin | SEG1_Pin | SEG2_Pin |
+					SEG3_Pin | SEG4_Pin | SEG5_Pin | SEG6_Pin, RESET);
+}
+void enable(int pin) {
+	HAL_GPIO_WritePin(GPIOA, controllPin[pin], RESET);
+}
 /* USER CODE END 0 */
 
 /**
@@ -89,7 +106,7 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -225,7 +242,20 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+	counter--;
+	if(counter == 50 || counter == 0) {
+		if (counter == 0) {
+			counter = 100;
+			HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+		}
+		clear();
+		enable(state);
+		display7SEG(buffer[state]);
+		if (state == 0) state = 1;
+		else state = 0;
+	}
+}
 /* USER CODE END 4 */
 
 /**
