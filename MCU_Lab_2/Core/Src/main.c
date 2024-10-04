@@ -192,7 +192,8 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   setTimer1(1000);
-  setTimer2(1000);
+  setTimer2(250);
+  setTimer3(1000);
   while (1)
   {
 	  if(timer1_flag == 1) {
@@ -201,6 +202,12 @@ int main(void)
 		  setTimer1(1000);
 	  }
 	  if(timer2_flag == 1) {
+		  update7SEG(index_led);
+		  index_led++;
+		  if(index_led >= 4) index_led = 0;
+		  setTimer2(250);
+	  }
+	  if(timer3_flag == 1) {
 		  second++;
 		  if(second >= 60) {
 			  second = 0;
@@ -345,15 +352,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-int led = 25;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	if(led <= 0) {
-		update7SEG(index_led);
-		index_led++;
-		if(index_led >= 4) index_led = 0;
-		led = 25;
-	}
-	led--;
 	timer_run();
 }
 /* USER CODE END 4 */
