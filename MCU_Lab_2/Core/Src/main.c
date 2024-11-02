@@ -123,6 +123,7 @@ void updateClockBuffer() {
 //uint8_t matrix_buffer[8] = {0xE7,0xDB,0xBD,0x7E,0x00,0x00,0xFE,0xFE};
 const int MAX_LED_MATRIX = 8;
 int index_led_matrix = 0;
+uint8_t shift = 0;
 uint8_t matrix_buffer[8] = {  0b11100111,
 							  0b11011011,
 							  0b11011011,
@@ -153,39 +154,41 @@ void setRow() {
 	HAL_GPIO_WritePin(ROW6_GPIO_Port, ROW6_Pin, SET);
 	HAL_GPIO_WritePin(ROW7_GPIO_Port, ROW7_Pin, SET);
 }
-void updateLEDMatrix(int index){
+void updateLEDMatrix(uint8_t index, uint8_t shift){
 	setRow();
+	uint8_t matrix_buffer_shift = (matrix_buffer[index] << shift | matrix_buffer[index] >> (8 - shift));
+	//setCol(matrix_buffer_shift);
 	switch (index){
 	case 0:
-		setCol(matrix_buffer[0]);
+		setCol(matrix_buffer_shift);
 		HAL_GPIO_WritePin(ROW0_GPIO_Port, ROW0_Pin, RESET);
 		break;
 	case 1:
-		setCol(matrix_buffer[1]);
+		setCol(matrix_buffer_shift);
 		HAL_GPIO_WritePin(ROW1_GPIO_Port, ROW1_Pin, RESET);
 		break;
 	case 2:
-		setCol(matrix_buffer[2]);
+		setCol(matrix_buffer_shift);
 		HAL_GPIO_WritePin(ROW2_GPIO_Port, ROW2_Pin, RESET);
 		break;
 	case 3:
-		setCol(matrix_buffer[3]);
+		setCol(matrix_buffer_shift);
 		HAL_GPIO_WritePin(ROW3_GPIO_Port, ROW3_Pin, RESET);
 		break;
 	case 4:
-		setCol(matrix_buffer[4]);
+		setCol(matrix_buffer_shift);
 		HAL_GPIO_WritePin(ROW4_GPIO_Port, ROW4_Pin, RESET);
 		break;
 	case 5:
-		setCol(matrix_buffer[5]);
+		setCol(matrix_buffer_shift);
 		HAL_GPIO_WritePin(ROW5_GPIO_Port, ROW5_Pin, RESET);
 		break;
 	case 6:
-		setCol(matrix_buffer[6]);
+		setCol(matrix_buffer_shift);
 		HAL_GPIO_WritePin(ROW6_GPIO_Port, ROW6_Pin, RESET);
 		break;
 	case 7:
-		setCol(matrix_buffer[7]);
+		setCol(matrix_buffer_shift);
 		HAL_GPIO_WritePin(ROW7_GPIO_Port, ROW7_Pin, RESET);
 		break;
 	default:
@@ -244,9 +247,13 @@ int main(void)
 		  index_led++;
 		  if(index_led >= 4) index_led = 0;
 
-	  	  updateLEDMatrix(index_led_matrix);
+	  	  updateLEDMatrix(index_led_matrix, shift);
 	  	  index_led_matrix++;
-	  	  if(index_led_matrix >= 8) index_led_matrix = 0;
+	  	  if(index_led_matrix >= 8) {
+	  		  index_led_matrix = 0;
+	  		  shift++;
+	  		  if(shift >= 8) shift = 0;
+	  	  }
 	  	  setTimer2(250);
 	  }
 	  if(timer3_flag == 1) {
