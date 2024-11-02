@@ -136,17 +136,16 @@ void display7SEG(int num) {
 void clear() {
  80001b0:	b580      	push	{r7, lr}
  80001b2:	af00      	add	r7, sp, #0
-	HAL_GPIO_WritePin(GPIOA, EN0_Pin | EN1_Pin, SET);
+	HAL_GPIO_WritePin(GPIOA, EN0_Pin | EN1_Pin | EN2_Pin | EN3_Pin, SET);
  80001b4:	2201      	movs	r2, #1
- 80001b6:	21c0      	movs	r1, #192	; 0xc0
- 80001b8:	4802      	ldr	r0, [pc, #8]	; (80001c4 <clear+0x14>)
- 80001ba:	f000 fe3d 	bl	8000e38 <HAL_GPIO_WritePin>
+ 80001b6:	f44f 7170 	mov.w	r1, #960	; 0x3c0
+ 80001ba:	4802      	ldr	r0, [pc, #8]	; (80001c4 <clear+0x14>)
+ 80001bc:	f000 fe3c 	bl	8000e38 <HAL_GPIO_WritePin>
 //	HAL_GPIO_WritePin(GPIOB, SEG0_Pin | SEG1_Pin | SEG2_Pin |
 //					SEG3_Pin | SEG4_Pin | SEG5_Pin | SEG6_Pin, RESET);
 }
- 80001be:	bf00      	nop
- 80001c0:	bd80      	pop	{r7, pc}
- 80001c2:	bf00      	nop
+ 80001c0:	bf00      	nop
+ 80001c2:	bd80      	pop	{r7, pc}
  80001c4:	40010800 	.word	0x40010800
 
 080001c8 <enable>:
