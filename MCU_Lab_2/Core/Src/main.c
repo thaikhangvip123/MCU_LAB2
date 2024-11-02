@@ -248,6 +248,7 @@ int main(void)
 	  	  index_led_matrix++;
 	  	  if(index_led_matrix >= 8) index_led_matrix = 0;
 	  	  setTimer2(250);
+	  }
 	  if(timer3_flag == 1) {
 		  second++;
 		  if(second >= 60) {
@@ -270,7 +271,6 @@ int main(void)
   }
   /* USER CODE END 3 */
 }
-
 /**
   * @brief System Clock Configuration
   * @retval None
