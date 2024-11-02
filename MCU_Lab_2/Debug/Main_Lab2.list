@@ -27,23 +27,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000029  00000000  00000000  0002003c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   00008723  00000000  00000000  00020065  2**0
+ 12 .debug_info   00008749  00000000  00000000  00020065  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 0000158d  00000000  00000000  00028788  2**0
+ 13 .debug_abbrev 0000158d  00000000  00000000  000287ae  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000980  00000000  00000000  00029d18  2**3
+ 14 .debug_aranges 00000988  00000000  00000000  00029d40  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_ranges 000008d8  00000000  00000000  0002a698  2**3
+ 15 .debug_ranges 000008e0  00000000  00000000  0002a6c8  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  000162a2  00000000  00000000  0002af70  2**0
+ 16 .debug_macro  000162a2  00000000  00000000  0002afa8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   000094f4  00000000  00000000  00041212  2**0
+ 17 .debug_line   0000950f  00000000  00000000  0004124a  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0008205f  00000000  00000000  0004a706  2**0
+ 18 .debug_str    00082068  00000000  00000000  0004a759  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000053  00000000  00000000  000cc765  2**0
+ 19 .comment      00000053  00000000  00000000  000cc7c1  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00002720  00000000  00000000  000cc7b8  2**2
+ 20 .debug_frame  00002744  00000000  00000000  000cc814  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -77,10 +77,10 @@ Disassembly of section .text:
  8000148:	08001e94 	.word	0x08001e94
 
 0800014c <display7SEG>:
+int index_led = 0;
 int controllPin[4] = {EN0_Pin, EN1_Pin, EN2_Pin, EN3_Pin};
 int buffer[4] = {1, 2, 3, 4};
-//int counter = 100, state = 1;
-int hour = 15, minute = 8, second = 50;
+int hour = 15, minute = 5, second = 50;
 
 void display7SEG(int num) {
  800014c:	b580      	push	{r7, lr}
@@ -136,20 +136,22 @@ void display7SEG(int num) {
 void clear() {
  80001b0:	b580      	push	{r7, lr}
  80001b2:	af00      	add	r7, sp, #0
-	HAL_GPIO_WritePin(GPIOA, EN0_Pin | EN1_Pin, SET);
+	HAL_GPIO_WritePin(GPIOA, EN0_Pin | EN1_Pin | EN2_Pin | EN3_Pin, SET);
  80001b4:	2201      	movs	r2, #1
- 80001b6:	21c0      	movs	r1, #192	; 0xc0
- 80001b8:	4802      	ldr	r0, [pc, #8]	; (80001c4 <clear+0x14>)
- 80001ba:	f000 fe55 	bl	8000e68 <HAL_GPIO_WritePin>
+ 80001b6:	f44f 7170 	mov.w	r1, #960	; 0x3c0
+ 80001ba:	4802      	ldr	r0, [pc, #8]	; (80001c4 <clear+0x14>)
+ 80001bc:	f000 fe54 	bl	8000e68 <HAL_GPIO_WritePin>
 //	HAL_GPIO_WritePin(GPIOB, SEG0_Pin | SEG1_Pin | SEG2_Pin |
 //					SEG3_Pin | SEG4_Pin | SEG5_Pin | SEG6_Pin, RESET);
 }
- 80001be:	bf00      	nop
- 80001c0:	bd80      	pop	{r7, pc}
- 80001c2:	bf00      	nop
+ 80001c0:	bf00      	nop
+ 80001c2:	bd80      	pop	{r7, pc}
  80001c4:	40010800 	.word	0x40010800
 
 080001c8 <enable>:
+void clearPin(int pin) {
+	HAL_GPIO_WritePin(GPIOA, controllPin[pin], RESET);
+}
 void enable(int pin) {
  80001c8:	b580      	push	{r7, lr}
  80001ca:	b082      	sub	sp, #8

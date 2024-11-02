@@ -60,8 +60,7 @@ const int MAX_LED = 4;
 int index_led = 0;
 int controllPin[4] = {EN0_Pin, EN1_Pin, EN2_Pin, EN3_Pin};
 int buffer[4] = {1, 2, 3, 4};
-//int counter = 100, state = 1;
-int hour = 15, minute = 8, second = 50;
+int hour = 15, minute = 5, second = 50;
 
 void display7SEG(int num) {
 	char segNum[10] = {0xC0, 0xF9, 0xA4, 0xB0, 0x99, 0x92, 0x82, 0xF8, 0x80, 0x90};
@@ -70,9 +69,12 @@ void display7SEG(int num) {
 	}
 }
 void clear() {
-	HAL_GPIO_WritePin(GPIOA, EN0_Pin | EN1_Pin, SET);
+	HAL_GPIO_WritePin(GPIOA, EN0_Pin | EN1_Pin | EN2_Pin | EN3_Pin, SET);
 //	HAL_GPIO_WritePin(GPIOB, SEG0_Pin | SEG1_Pin | SEG2_Pin |
 //					SEG3_Pin | SEG4_Pin | SEG5_Pin | SEG6_Pin, RESET);
+}
+void clearPin(int pin) {
+	HAL_GPIO_WritePin(GPIOA, controllPin[pin], RESET);
 }
 void enable(int pin) {
 	HAL_GPIO_WritePin(GPIOA, controllPin[pin], RESET);
